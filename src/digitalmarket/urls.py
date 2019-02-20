@@ -18,4 +18,5 @@ from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('detail/', 'products.views.detail_view', name="detail_view"),
 ]
