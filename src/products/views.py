@@ -1,20 +1,24 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from .models import Product
 
 # Create your views here.
-def detail_view(request):
-    if request.user.is_authenticated:
-        product = Product.objects.all().first()
-        template = "detail_view.html"
-        context = {
-            "title": "Hello Again",
-            "object": product
+def detail_slug_view(request, slug=None):
+    product = get_object_or_404(Product, slug=slug)
+    template = "detail_view.html"
+    context = {
+        "object": product
         }
-    else:    
-        template = "not_found.html"
-        context = {}
     return render(request, template, context)
+
+def detail_view(request, object_id=None):
+    product = get_object_or_404(Product, id=object_id)
+    template = "detail_view.html"
+    context = {
+        "object": product
+        }
+    return render(request, template, context)
+
 
 def list_view(request):
     queryset = Product.objects.all()
