@@ -1,9 +1,17 @@
 from django import forms
 
+PUBLISH_CHOICES = {
+    ('', ""),
+    ('publish', "Publish"),
+    ('draft', "Draft"),
+}
+
 class ProductAddForm(forms.Form):
     title = forms.CharField()
-    description = forms.CharField()
+    description = forms.CharField(widget=forms.Textarea)
     price = forms.DecimalField()
+    publish = forms.ChoiceField(choices=PUBLISH_CHOICES, required=False)
+    #publish = forms.ChoiceField(widget=forms.RadioSelect, choices=PUBLISH_CHOICES, required=False)
 
     def clean_price(self):
         price = self.cleaned_data.get("price")
@@ -19,4 +27,3 @@ class ProductAddForm(forms.Form):
             return title
         else:
             raise forms.ValidationError("Title must be greater than 3 characters long.")    
-            
