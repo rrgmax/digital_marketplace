@@ -1,8 +1,25 @@
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
+from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from .forms import ProductAddForm, ProductModelForm
 from .models import Product
+
+
+class ProductDetailView(DetailView):
+    model = Product
+
+    def get_object(self, *args, **kwargs):
+        slug = self.kwargs.get("slug")
+        ModelClass = self.model
+        if slug is not None:
+            try:
+                obj = get_object_or_404(ModelClass, slug=slug)
+            except ModelClass.MultupleObjectsReturned:
+                obj = ModelClass.objects.filter(slug=slug).order_by("-title").first()
+        else:
+            obj = super(ProductDetailView, self).get_object(*args, **kwargs)
+        return obj
 
 class ProductListView(ListView):
     model = Product
@@ -48,7 +65,7 @@ def detail_slug_view(request, slug=None):
     try:
         product = get_object_or_404(Product, slug=slug)
     except Product.MultupleObjectsReturned:
-        product = Product.objects.filter(slug=slug).order_by("title").first()    
+        product = Product.objects.filter(slug=slug).order_by("-title").first()    
     template = "detail_view.html"
     context = {
         "object": product
