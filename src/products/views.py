@@ -25,7 +25,7 @@ def update_view(request, object_id=None):
         instance = form.save(commit=False)
         # instance.sale_price = instance.price
         instance.save()
-    template = "updade_view.html"
+    template = "update_view.html"
     context = {
         "object": product,
         "form": form,
