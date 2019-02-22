@@ -1,9 +1,16 @@
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
-
+from django.views.generic.list import ListView
 from .forms import ProductAddForm, ProductModelForm
 from .models import Product
 
+class ProductListView(ListView):
+    model = Product
+    
+    def get_queryset(self, *args, **kwargs):
+        qs = super(ProductListView, self).get_queryset(**kwargs)
+        # qs = qs.filter(title_incontains="Product")
+        return qs
 
 def create_view(request):
     form = ProductModelForm(request.POST or None)
