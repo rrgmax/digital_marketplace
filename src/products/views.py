@@ -1,11 +1,26 @@
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
-from digitalmarket.mixins import MultiSlugMixim
+from digitalmarket.mixins import MultiSlugMixim, SubmitBtnMixin
 from .forms import ProductAddForm, ProductModelForm
 from .models import Product
 
+
+class ProductCreateView(SubmitBtnMixin ,CreateView):
+    model = Product
+    template_name = "form.html"
+    form_class = ProductModelForm
+    success_url = "/products/add/"
+    submit_btn = "Add"
+
+class ProductUpdateView(SubmitBtnMixin, MultiSlugMixim, UpdateView):
+    model = Product
+    template_name = "form.html"
+    form_class = ProductModelForm
+    success_url = "/products/"
+    submit_btn = "Update"
 
 class ProductDetailView(MultiSlugMixim, DetailView):
     model = Product
