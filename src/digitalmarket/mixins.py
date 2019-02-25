@@ -11,7 +11,7 @@ class MultiSlugMixim(object):
         if slug is not None:
             try:
                 obj = get_object_or_404(ModelClass, slug=slug)
-            except ModelClass.MultupleObjectsReturned:
+            except ModelClass.MultipleObjectsReturned:
                 obj = ModelClass.objects.filter(slug=slug).order_by("-title").first()
         else:
             obj = super(MultiSlugMixim, self).get_object(*args, **kwargs)
