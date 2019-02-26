@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.detail import DetailView
@@ -16,12 +17,11 @@ from .models import Product
 
 
 
-
 class ProductCreateView(LoginRequiredMixin, SubmitBtnMixin ,CreateView):
     model = Product
     template_name = "form.html"
     form_class = ProductModelForm
-    success_url = "/products/"
+    #success_url = "/products/"
     submit_btn = "Add"
 
     def form_valid(self, form):
@@ -31,12 +31,19 @@ class ProductCreateView(LoginRequiredMixin, SubmitBtnMixin ,CreateView):
         form.instance.managers.add(user)
         return valid_data
 
+    def get_success_url(self):
+        return reverse("product_list_view")
+
+
 class ProductUpdateView(ProductManagerMixin, SubmitBtnMixin, MultiSlugMixim, UpdateView):
     model = Product
     template_name = "form.html"
     form_class = ProductModelForm
-    success_url = "/products/"
+    #success_url = "/products/"
     submit_btn = "Update"
+
+    def get_success_url(self):
+        return reverse("product_list_view")
 
 class ProductDetailView(MultiSlugMixim, DetailView):
     model = Product
