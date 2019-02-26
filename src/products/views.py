@@ -31,8 +31,8 @@ class ProductCreateView(LoginRequiredMixin, SubmitBtnMixin ,CreateView):
         form.instance.managers.add(user)
         return valid_data
 
-    def get_success_url(self):
-        return reverse("product_list_view")
+    # def get_success_url(self):
+    #     return reverse("products:list")
 
 
 class ProductUpdateView(ProductManagerMixin, SubmitBtnMixin, MultiSlugMixim, UpdateView):
