@@ -1,5 +1,8 @@
+import os
+
+from django.conf import settings
 from django.urls import reverse
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
@@ -9,6 +12,7 @@ from digitalmarket.mixins import (
             MultiSlugMixim,
             SubmitBtnMixin
             )
+from wsgiref.util import FileWrapper
 
 from .forms import ProductAddForm, ProductModelForm
 from .mixins import ProductManagerMixin
@@ -42,11 +46,23 @@ class ProductUpdateView(ProductManagerMixin, SubmitBtnMixin, MultiSlugMixim, Upd
     #success_url = "/products/"
     submit_btn = "Update"
 
-    def get_success_url(self):
-        return reverse("product_list_view")
+    # def get_success_url(self):
+    #     return reverse("product_list_view")
 
 class ProductDetailView(MultiSlugMixim, DetailView):
     model = Product
+
+class ProductDownloadView(MultiSlugMixim, DetailView):
+    model = Product
+    
+    def get(self, request, *args, **kwargs):
+        obj = self.get_object()
+        filepath = os.path.join(settings.PROTECTED_ROOT, obj.media.path)
+        #wrapper = FileWrapper(filepath) #, blksize=5) Get AttributeError: 'str' object has no attribute 'read' 
+        response = HttpResponse(filepath, content_type='application/force-download')
+        response["Content-Disposition"] = "attachment; filename=%s" %(obj.media.name)
+        response["X-SendFile"] = str(obj.media.name) 
+        return response
 
 class ProductListView(ListView):
     model = Product

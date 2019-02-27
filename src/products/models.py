@@ -23,11 +23,14 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
-    def get_absolut_url(self):
+    def get_absolute_url(self):
         view_name = "products:detail_slug"
         return reverse(view_name, kwargs={"slug": self.slug})
 
-
+    def get_download(self):
+        view_name = "products:download_slug"
+        url = reverse(view_name, kwargs={"slug": self.slug})
+        return url
 
 def create_slug(instance, new_slug=None):
     slug = slugify(instance.title)

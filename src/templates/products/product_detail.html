@@ -1,9 +1,13 @@
 {% extends "base.html" %}
+
 {% block content %}
 
 <h1>Product: {{ object.title }} </h1>
 <p>{{ object.description }}</p>
 <p>{{ object.price }}</p>
 
+{% if object.media %}
+<p><a href='{{ object.get_download }}'>Download</a></p>
+{% endif %}
 
 {% endblock %}
