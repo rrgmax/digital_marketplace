@@ -5,10 +5,10 @@ from django.db.models.signals import pre_save, post_save
 from django.urls import reverse
 from django.utils.text import slugify
 
-def download_media_location(instance, filename):
-    return "%s/%s" %(instance.id, filename)
 
-# Create your models here.
+def download_media_location(instance, filename):
+    return "%s/%s" %(instance.slug, filename)
+
 class Product(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) 
     managers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="managers_products", blank=True)    
@@ -43,13 +43,34 @@ def create_slug(instance, new_slug=None):
         return create_slug(instance, new_slug=new_slug)
     return slug        
 
-
 def product_pre_save_reciever(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = create_slug(instance)
 
 pre_save.connect(product_pre_save_reciever, sender=Product)
 
+
+
+def thumbnail_location(instance, filename):
+    return "%s/%s" %(instance.product.slug, filename)
+
+
+class Thumbnail(models.Model):
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    height = models.CharField(max_length=20, null=True, blank=True)
+    width = models.CharField(max_length=20, null=True, blank=True)
+    media = models.ImageField(
+        width_field = "width",
+        height_field = "height",
+        blank=True, 
+        null=True,
+        upload_to=thumbnail_location)
+
+
+    def __str__(self):
+        return str(self.media.path)    
+        
 
 class MyProducts(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
