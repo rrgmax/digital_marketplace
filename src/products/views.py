@@ -38,9 +38,6 @@ class ProductCreateView(LoginRequiredMixin, SubmitBtnMixin ,CreateView):
         form.instance.managers.add(user)
         return valid_data
 
-    # def get_success_url(self):
-    #     return reverse("products:list")
-
 
 class ProductUpdateView(ProductManagerMixin, SubmitBtnMixin, MultiSlugMixim, UpdateView):
     model = Product
@@ -49,9 +46,7 @@ class ProductUpdateView(ProductManagerMixin, SubmitBtnMixin, MultiSlugMixim, Upd
     #success_url = "/products/"
     submit_btn = "Update"
 
-    # def get_success_url(self):
-    #     return reverse("product_list_view")
-
+  
 class ProductDetailView(MultiSlugMixim, DetailView):
     model = Product
 
@@ -82,8 +77,9 @@ class ProductListView(ListView):
 
     def get_queryset(self, *args, **kwargs):
         qs = super(ProductListView, self).get_queryset(**kwargs)
-        query = self.request.GET.get("q") #, "abc")
-        #qs = qs.filter(Q(title__icontains=query)|Q(description__icontains=query)).order_by("title")
+        query = self.request.GET.get("q")
+        if query:
+            qs = qs.filter(Q(title__icontains=query)|Q(description__icontains=query)).order_by("title")
         return qs
 
 def create_view(request):

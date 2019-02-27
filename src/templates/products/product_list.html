@@ -12,7 +12,9 @@
 </p>
 <ul>
 {% for instance in object_list %}
-    <li>{{ instance }} - {{ instance.description }} {{ instance.price }}</li>    
+    <li><a href="{{ instance.get_absolute_url }}">{{ instance.title }}</a><br/>
+        {{ instance.description|truncatechars:100 }}<br/>
+        {{ instance.price }}</li>    
 {% empty %}
     <li>No product yet.</li>
 {% endfor %}    
