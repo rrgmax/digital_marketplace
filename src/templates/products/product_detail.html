@@ -8,6 +8,8 @@
 
 {% if object.media %}
 <p><a href='{{ object.get_download }}'>Download</a></p>
+<p><a href='{{ object.get_download }}?preview=True'>Preview</a></p>
+
 {% endif %}
 
 {% endblock %}

@@ -1,5 +1,7 @@
 import os
 
+from mimetypes import guess_type
+
 from django.conf import settings
 from django.urls import reverse
 from django.http import Http404, HttpResponse
@@ -58,9 +60,16 @@ class ProductDownloadView(MultiSlugMixim, DetailView):
     def get(self, request, *args, **kwargs):
         obj = self.get_object()
         filepath = os.path.join(settings.PROTECTED_ROOT, obj.media.path)
+        guessed_type = guess_type(filepath)[0]
         #wrapper = FileWrapper(filepath) #, blksize=5) Get AttributeError: 'str' object has no attribute 'read' 
-        response = HttpResponse(filepath, content_type='application/force-download')
-        response["Content-Disposition"] = "attachment; filename=%s" %(obj.media.name)
+        mimetype = 'application/force-download'
+        if guessed_type:
+            mimetype = guessed_type
+        response = HttpResponse(filepath, content_type=mimetype)
+
+        if not request.GET.get("preview"):
+            response["Content-Disposition"] = "attachment; filename=%s" %(obj.media.name)
+        
         response["X-SendFile"] = str(obj.media.name) 
         return response
 
