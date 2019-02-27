@@ -58,3 +58,8 @@ class MyProducts(models.Model):
     def __str__(self):
         return "%s" %(self.products.count())
 
+
+    class Meta:
+        verbose_name = "My Products"
+        verbose_name_plural = "My Products"    
+
