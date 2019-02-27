@@ -3,6 +3,7 @@ import os
 from mimetypes import guess_type
 
 from django.conf import settings
+from django.db.models import Q
 from django.urls import reverse
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
@@ -78,8 +79,11 @@ class ProductDownloadView(MultiSlugMixim, DetailView):
 
 class ProductListView(ListView):
     model = Product
+
     def get_queryset(self, *args, **kwargs):
         qs = super(ProductListView, self).get_queryset(**kwargs)
+        query = self.request.GET.get("q") #, "abc")
+        #qs = qs.filter(Q(title__icontains=query)|Q(description__icontains=query)).order_by("title")
         return qs
 
 def create_view(request):
